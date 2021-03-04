@@ -21,6 +21,6 @@ public class Main {
             results.addAll(results2);
             return results;
         }).orElseThrow().stream().collect(Collectors.groupingBy(Enum::name, HashMap::new, Collectors.counting()))
-                .forEach((s, results) -> System.out.println(s + "=" + results));
+                .forEach((s, results) -> System.out.print(s + "=" + results + " "));
     }
 }
