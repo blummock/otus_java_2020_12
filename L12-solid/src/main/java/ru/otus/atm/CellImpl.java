@@ -30,6 +30,6 @@ public class CellImpl implements Cell {
         return coins;
     }
 
-    private final ArrayList<Coin> store = new ArrayList<>();
+    private final List<Coin> store = new ArrayList<>();
     private Integer nominal;
 }
