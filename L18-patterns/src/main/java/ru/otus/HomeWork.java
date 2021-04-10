@@ -1,14 +1,11 @@
 package ru.otus;
 
 import ru.otus.handler.ComplexProcessor;
-import ru.otus.listener.ListenerPrinter;
 import ru.otus.listener.homework.HistoryListener;
 import ru.otus.model.Message;
 import ru.otus.model.ObjectForMessage;
-import ru.otus.processor.FacadeProcessorExceptionInSec;
-import ru.otus.processor.LoggerProcessor;
+import ru.otus.processor.ProcessorExceptionInSec;
 import ru.otus.processor.ProcessorReplaceFields;
-import ru.otus.processor.ProcessorUpperField10;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +26,7 @@ public class HomeWork {
            по аналогии с Demo.class
            из элеменов "to do" создать new ComplexProcessor и обработать сообщение
          */
-        var processors = List.of(new FacadeProcessorExceptionInSec(),
+        var processors = List.of(new ProcessorExceptionInSec(System::currentTimeMillis),
                 new ProcessorReplaceFields());
 
         var complexProcessor = new ComplexProcessor(processors, Throwable::printStackTrace);
