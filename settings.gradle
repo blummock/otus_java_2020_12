@@ -5,5 +5,5 @@ include 'L06-reflection'
 include 'L08-gc'
 include 'L10-byteCodes'
 include 'L12-solid'
+include 'L15-patterns'
 include 'L16-io'
-
