@@ -30,12 +30,16 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public Field getIdField() {
-        return getAllFields().stream().filter(field -> field.isAnnotationPresent(ID.class)).findFirst().orElseThrow();
+        return getAllFields()
+                .stream()
+                .filter(field -> field.isAnnotationPresent(ID.class))
+                .findFirst()
+                .orElseThrow();
     }
 
     @Override
     public List<Field> getAllFields() {
-        return Arrays.asList(entity.getDeclaredFields().clone());
+        return Arrays.asList(entity.getDeclaredFields());
     }
 
     @Override
