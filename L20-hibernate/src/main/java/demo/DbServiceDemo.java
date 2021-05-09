@@ -23,12 +23,6 @@ public class DbServiceDemo {
 
     public static void main(String[] args) {
         var configuration = new Configuration().configure(HIBERNATE_CFG_FILE);
-
-        var dbUrl = configuration.getProperty("hibernate.connection.url");
-        var dbUserName = configuration.getProperty("hibernate.connection.username");
-        var dbPassword = configuration.getProperty("hibernate.connection.password");
-
-
         var sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class,
                 AddressDataSet.class, PhoneDataSet.class);
 
