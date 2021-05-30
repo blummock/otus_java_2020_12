@@ -10,4 +10,6 @@ include 'L16-io'
 include 'L18-jdbc:demo'
 include 'L18-jdbc:homework'
 include 'L20-hibernate'
+include 'L22-cache:weak'
+include 'L22-cache:orm'
 
