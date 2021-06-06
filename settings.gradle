@@ -13,4 +13,5 @@ include 'L20-hibernate'
 include 'L22-cache:weak'
 include 'L22-cache:orm'
 include 'L24-webServer'
+include 'L25-di:homework-template'
 
