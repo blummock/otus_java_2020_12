@@ -14,12 +14,8 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     private final List<Object> appComponents = new ArrayList<>();
     private final Map<String, Object> appComponentsByName = new HashMap<>();
 
-    public AppComponentsContainerImpl(Class<?> initialConfigClass) {
-        try {
-            processConfig(initialConfigClass);
-        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
-            e.printStackTrace();
-        }
+    public AppComponentsContainerImpl(Class<?> initialConfigClass) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+        processConfig(initialConfigClass);
     }
 
     private void processConfig(Class<?> configClass) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
@@ -30,7 +26,9 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         Object config = configClass.getConstructor(null).newInstance(null);
         for (Method component : components) {
             Object[] args = Arrays.stream(component.getParameterTypes()).map(this::getAppComponent).toArray();
-            appComponents.add(component.invoke(config, args));
+            Object obj = component.invoke(config, args);
+            appComponents.add(obj);
+            appComponentsByName.put(component.getAnnotation(AppComponent.class).name(), obj);
         }
     }
 
@@ -53,6 +51,6 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     @Override
     public <C> C getAppComponent(String componentName) {
-        return null;
+        return (C) appComponentsByName.get(componentName);
     }
 }
