@@ -18,17 +18,21 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         processConfig(initialConfigClass);
     }
 
-    private void processConfig(Class<?> configClass) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+    private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
-        List<Method> components = Arrays.stream(configClass.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(AppComponent.class))
-                .sorted(Comparator.comparingInt(this::getAnnotationOrder)).collect(Collectors.toList());
-        Object config = configClass.getConstructor(null).newInstance(null);
-        for (Method component : components) {
-            Object[] args = Arrays.stream(component.getParameterTypes()).map(this::getAppComponent).toArray();
-            Object obj = component.invoke(config, args);
-            appComponents.add(obj);
-            appComponentsByName.put(component.getAnnotation(AppComponent.class).name(), obj);
+        try {
+            List<Method> components = Arrays.stream(configClass.getDeclaredMethods())
+                    .filter(method -> method.isAnnotationPresent(AppComponent.class))
+                    .sorted(Comparator.comparingInt(this::getAnnotationOrder)).collect(Collectors.toList());
+            Object config = configClass.getConstructor(null).newInstance(null);
+            for (Method component : components) {
+                Object[] args = Arrays.stream(component.getParameterTypes()).map(this::getAppComponent).toArray();
+                Object obj = component.invoke(config, args);
+                appComponents.add(obj);
+                appComponentsByName.put(component.getAnnotation(AppComponent.class).name(), obj);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Init exception");
         }
     }
 
@@ -46,11 +50,12 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     @Override
     public <C> C getAppComponent(Class<C> componentClass) {
         return (C) appComponents.stream().filter(o -> componentClass.isAssignableFrom(o.getClass())).
-                findFirst().orElseThrow();
+                findFirst().orElseThrow(() -> new RuntimeException("Component not found"));
     }
 
     @Override
     public <C> C getAppComponent(String componentName) {
-        return (C) appComponentsByName.get(componentName);
+        return Optional.ofNullable((C) appComponentsByName.get(componentName))
+                .orElseThrow(() -> new RuntimeException("Component not found"));
     }
 }
