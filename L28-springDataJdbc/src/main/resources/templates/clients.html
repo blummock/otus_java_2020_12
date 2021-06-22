@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Клиенты</title>
+    <script>
+        function addClient() {
+            const clientNameVal = document.getElementById('clientName').value;
+            const clientLoginVal = document.getElementById('clientLogin').value;
+            const clientAddressVal = document.getElementById('clientAddress').value;
+            fetch('api/client', {
+                method: 'post',
+                headers: {
+                  "Content-type": "application/json; charset=UTF-8"
+                },
+            body: JSON.stringify({name: clientNameVal, login: clientLoginVal, address: clientAddressVal})
+            })
+            .then(
+             function(response) {
+                 if (response.status === 200) {
+                  location.reload()
+                 }
+             }
+            )
+            .catch(function(err) {
+              console.log('Fetch Error :-S', err);
+           });
+        }
+    </script>
+</head>
+
+<body>
+<h4>Добавить клиента</h4>
+<input type="text" id="clientName" placeholder="Введите Имя">
+<input type="text" id="clientLogin" placeholder="Введите Логин">
+<input type="text" id="clientAddress" placeholder="Введите Адрес">
+<button onclick="addClient()">Добавить</button>
+<style type="text/css">
+   TABLE {
+    width: 90%;
+   }
+   TD {
+    background: #F6F6F6;
+   }
+
+
+</style>
+<h4>Список клиентов</h4>
+<table class="clients">
+    <thead>
+    <tr>
+        <td style="width: 50px">Id</td>
+        <td style="width: 150px">Имя</td>
+        <td style="width: 100px">Логин</td>
+        <td style="width: 100px">Адрес</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="client : ${clients}">
+        <td th:text="${client.id}">1</td>
+        <td th:text="${client.name}">John Doe</td>
+        <td th:text="${client.login}">Login</td>
+        <td th:text="${client.address}">addr</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
