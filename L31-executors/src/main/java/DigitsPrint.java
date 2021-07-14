@@ -4,31 +4,34 @@ import org.slf4j.LoggerFactory;
 public class DigitsPrint {
 
     private static final Logger logger = LoggerFactory.getLogger(DigitsPrint.class);
+    private String last = "thread2";
 
     public static void main(String[] args) {
         DigitsPrint digitsPrint = new DigitsPrint();
-        new Thread(() -> digitsPrint.action()).start();
-        new Thread(() -> digitsPrint.action()).start();
+        new Thread(() -> digitsPrint.action("thread1")).start();
+        new Thread(() -> digitsPrint.action("thread2")).start();
     }
 
-    private synchronized void action() {
-        for (int i = 0; i <= 10; i++) {
-            try {
+    private synchronized void action(String threadName) {
+        try {
+            for (int i = 0; i <= 10; i++) {
+                while (last.equals(threadName)) {
+                    wait();
+                }
                 printDigitAndSleep(i);
+                last = threadName;
                 notifyAll();
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
-        }
-        for (int i = 9; i >= 0; i--) {
-            try {
+            for (int i = 9; i >= 0; i--) {
+                while (last.equals(threadName)) {
+                    wait();
+                }
                 printDigitAndSleep(i);
+                last = threadName;
                 notifyAll();
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         notifyAll();
     }
