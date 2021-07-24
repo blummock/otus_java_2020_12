@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Клиенты</title>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script>
+        function addClient() {
+            const clientNameVal = document.getElementById('clientName').value;
+            const clientLoginVal = document.getElementById('clientLogin').value;
+            const clientAddressVal = document.getElementById('clientAddress').value;
+            fetch('api/client', {
+                method: 'post',
+                headers: {
+                  "Content-type": "application/json; charset=UTF-8"
+                },
+            body: JSON.stringify({name: clientNameVal, login: clientLoginVal, address: clientAddressVal})
+            })
+            .then(response => console.log(response));
+        }
+    </script>
+    <script type="text/JavaScript">
+    function addRow(table, id, name, login, address) {
+      var newRow = table.insertRow(table.rows.length);
+      [id, name, login, address]
+      .forEach((s, index) => newRow.insertCell(index).appendChild(document.createTextNode(s)));
+    }
+
+    function getClients() {
+      const stompClient = Stomp.over(new SockJS('/gs-guide-websocket'));
+      stompClient.connect({}, (frame) => {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/clients', (timeMsg) => {
+         var tableBody = document.getElementById('clientsTable');
+          tableBody.innerHTML = "";
+          addRow(tableBody, "id", "Имя", "Логин", "Адрес")
+          JSON.parse(timeMsg.body).forEach(s => addRow(tableBody, s.id, s.name, s.login, s.address) )});
+          fetch('api/client/list')
+                .then(response => console.log(response))
+      });
+    }
+    </script>
+</head>
+
+<body onload="getClients();">
+<h4>Добавить клиента</h4>
+<input type="text" id="clientName" placeholder="Введите Имя">
+<input type="text" id="clientLogin" placeholder="Введите Логин">
+<input type="text" id="clientAddress" placeholder="Введите Адрес">
+<button onclick="addClient()">Добавить</button>
+<style type="text/css">
+   TABLE {
+    width: 90%;
+   }
+   TD {
+    background: #F6F6F6;
+   }
+
+</style>
+<h4>Список клиентов</h4>
+<table id="clientsTable"/>
+</body>
+</html>
