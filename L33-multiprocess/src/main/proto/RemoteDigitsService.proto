@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ru.otus.generated;
+
+option java_multiple_files = true;
+
+message StartMessage {
+    int32 start = 1;
+    int32 end = 2;
+}
+
+message DigitMessage {
+    int32 val = 1;
+}
+
+service RemoteDigitGenerationService {
+    rpc generate(StartMessage) returns (stream DigitMessage);
+}
